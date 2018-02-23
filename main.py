@@ -25,8 +25,8 @@ def scraping(first_name="", last_name="", driver=None):
     url = "https://extranet.cst.ucf.edu/phonebook/"
     if driver is None:
         chrome_options = Options()
-        # chrome_options.add_argument("--headless")
-        # chrome_options.add_argument('--disable-gpu')  # Last I checked this was necessary.
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument('--disable-gpu')  # Last I checked this was necessary.
         driver = webdriver.Chrome(chrome_options=chrome_options, executable_path='WebDriver/chromedriver.exe')
         driver.maximize_window()
 
@@ -34,11 +34,11 @@ def scraping(first_name="", last_name="", driver=None):
 
     # last_name= driver.find_element_by_css_selector("input#Text1")
     last_name_entry = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, "input#Text1"))
+        EC.presence_of_element_located((By.CSS_SELECTOR, "input#ctl00_ctl00_ContentPlaceHolder2_ContentPlaceHolder1_txtLastName"))
 
     )
-    first_name_entry= driver.find_element_by_css_selector("input#Text2")
-    submit_btn = driver.find_element_by_css_selector("input#Button1")
+    first_name_entry= driver.find_element_by_css_selector("input#ctl00_ctl00_ContentPlaceHolder2_ContentPlaceHolder1_txtFirstName")
+    submit_btn = driver.find_element_by_css_selector("input#ctl00_ctl00_ContentPlaceHolder2_ContentPlaceHolder1_btnIndividualSearch")
 
     last_name_entry.send_keys(last_name)
     first_name_entry.send_keys(first_name)
@@ -46,11 +46,11 @@ def scraping(first_name="", last_name="", driver=None):
 
     try:
         rows = WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "table#DirData > tbody > tr"))
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "table.individual_result_container > tbody > tr"))
 
         )
-        phone_num = rows[1].find_elements_by_css_selector("td")[1].text.strip()
-        email = rows[1].find_elements_by_css_selector("td")[5].text.strip()
+        phone_num = rows[0].find_elements_by_css_selector("td")[2].text.strip().replace("Phone: ", "")
+        email = rows[0].find_elements_by_css_selector("td")[1].text.strip()
 
     except:
         phone_num = ""
@@ -63,5 +63,5 @@ def scraping(first_name="", last_name="", driver=None):
 
     return [phone_num, email]
 
-scraping(first_name="SHANNON", last_name="ACOSTA")
+scraping(first_name="SELMA", last_name="ABDUL")
 # scraping(first_name="ANTHONY", last_name="ABBATE")
